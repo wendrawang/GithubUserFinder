@@ -21,7 +21,12 @@ class UserRepository {
 
                     //check if no matching account (show as empty list)
                     if(listUrl.isEmpty()){
-                        callback(null, Constants.error_not_match_msg)
+                        //prevent show error when trying open page > 1 but there is no data
+                        if(page == 1){
+                            callback(null, Constants.error_not_match_msg)
+                        }else {
+                            callback(null, "")
+                        }
                     }else {
                         callback(listUrl, "")
                     }

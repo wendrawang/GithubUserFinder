@@ -2,6 +2,8 @@ package app.wendra.githubuserfinder.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +17,7 @@ import app.wendra.githubuserfinder.util.Constants
 import app.wendra.githubuserfinder.util.KeyboardUtil
 import app.wendra.githubuserfinder.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.list_item_layout.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,17 +46,16 @@ class MainActivity : AppCompatActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
-
-                linearLayoutManager?.let {
-                    if (it.itemCount <= it.findLastVisibleItemPosition() + 2) {
-                        if(search_txt.text.toString().isNotEmpty()) {
-                            viewModel.searchUser(search_txt.text.toString())
-                        }
+                if (!recyclerView.canScrollVertically(1)) {
+                    if(username_txt.text.toString().isNotEmpty()){
+                        viewModel.searchUser(username_txt.text.toString())
+                        loading_layout.visibility = View.VISIBLE
                     }
                 }
             }
         })
+
+        loading_progress.animate()
     }
 
     private fun initListener(){
@@ -77,7 +79,10 @@ class MainActivity : AppCompatActivity() {
                     userAdapter.refreshList(listUser)
                 }
             }else {
-                Toast.makeText(this, it.errorMsg, Toast.LENGTH_LONG).show()
+                if(it.errorMsg.isNotEmpty()){
+                    Toast.makeText(this, it.errorMsg, Toast.LENGTH_LONG).show()
+                }
+                loading_layout.visibility = View.GONE
             }
         })
     }
