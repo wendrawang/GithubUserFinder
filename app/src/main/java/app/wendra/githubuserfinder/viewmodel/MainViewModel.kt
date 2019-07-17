@@ -27,6 +27,7 @@ class MainViewModel: ViewModel() {
         }
 
         userRepository.searchUser(name, currentPage) { listUrl, errorMsg ->
+            //map from list string into list userdataclass
             var listUser = mutableListOf<UserDataClass>()
             listUrl?.let {
                 it.forEach {url ->
@@ -36,6 +37,7 @@ class MainViewModel: ViewModel() {
                 }
             }
 
+            //check if firsttime or next page scrolling
             if(isFirstTime){
                 allSearchUsers = listUser
             }else {
