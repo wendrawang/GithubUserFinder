@@ -67,15 +67,19 @@ class MainActivity : AppCompatActivity() {
             //close keyboard
             KeyboardUtil.hideKeyboard(this)
 
-            //reset selected finder
-            selectedUsername = ""
-
-            //check if edittext is not empty
-            if(search_txt.text.toString().isEmpty()) {
-                Toast.makeText(this, Constants.error_empty_msg, Toast.LENGTH_LONG).show()
+            if(loading_progress.visibility == View.VISIBLE){
+                Toast.makeText(this, Constants.error_forcing_find, Toast.LENGTH_LONG).show()
             }else {
-                selectedUsername = search_txt.text.toString()
-                viewModel.searchUser(search_txt.text.toString(), true)
+                //reset selected finder
+                selectedUsername = ""
+
+                //check if edittext is not empty
+                if(search_txt.text.toString().isEmpty()) {
+                    Toast.makeText(this, Constants.error_empty_msg, Toast.LENGTH_LONG).show()
+                }else {
+                    selectedUsername = search_txt.text.toString()
+                    viewModel.searchUser(search_txt.text.toString(), true)
+                }
             }
         }
     }
