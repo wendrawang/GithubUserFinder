@@ -1,6 +1,5 @@
 package app.wendra.githubuserfinder.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.wendra.githubuserfinder.data.ResponseSearch
@@ -12,6 +11,7 @@ class MainViewModel: ViewModel() {
     private val userRepository = UserRepository()
 
     val resultSearch = MutableLiveData<ResponseSearch>()
+    val resultLoadingProgress = MutableLiveData<Boolean>()
 
     private var currentPage = 1
     private var isRunning = false
@@ -24,7 +24,13 @@ class MainViewModel: ViewModel() {
             //reset page every time this method is execute
             currentPage = 1
             successSearchUsers = mutableListOf()
+
+            //reset list everytime first time search
+            resultSearch.value = ResponseSearch(successSearchUsers, "")
         }
+
+        //start animate progress
+        resultLoadingProgress.value = true
 
         userRepository.searchUser(name, currentPage) { listUrl, errorMsg ->
             //map from list string into list userdataclass
@@ -46,13 +52,16 @@ class MainViewModel: ViewModel() {
 
             resultSearch.value = ResponseSearch(null, errorMsg)
 
-            //to prevent recursive runs multiple times
+            //to prevent calling recursive multiple times
             if(!isRunning) {
                 isRunning = true
                 getUserData()
             }
 
-            currentPage++
+            //make sure no error to prevent adding page even error
+            if(errorMsg.isEmpty()){
+                currentPage++
+            }
         }
     }
 
@@ -83,6 +92,9 @@ class MainViewModel: ViewModel() {
                 }
             }
         }else {
+            //stop progress
+            resultLoadingProgress.value = false
+
             //set running state to false if everything is done
             isRunning = false
         }

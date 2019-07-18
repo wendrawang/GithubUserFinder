@@ -48,8 +48,11 @@ class MainActivity : AppCompatActivity() {
 
                 if (!recyclerView.canScrollVertically(1)) {
                     if(username_txt.text.toString().isNotEmpty()){
-                        viewModel.searchUser(username_txt.text.toString())
-                        loading_layout.visibility = View.VISIBLE
+
+                        //prevent calling multiple times when still in progress
+                        if(loading_progress.visibility != View.VISIBLE) {
+                            viewModel.searchUser(username_txt.text.toString())
+                        }
                     }
                 }
             }
@@ -63,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             //close keyboard
             KeyboardUtil.hideKeyboard(this)
 
+            //check if edittext is not empty
             if(search_txt.text.toString().isEmpty()) {
                 Toast.makeText(this, Constants.error_empty_msg, Toast.LENGTH_LONG).show()
             }else {
@@ -82,7 +86,14 @@ class MainActivity : AppCompatActivity() {
                 if(it.errorMsg.isNotEmpty()){
                     Toast.makeText(this, it.errorMsg, Toast.LENGTH_LONG).show()
                 }
-                loading_layout.visibility = View.GONE
+            }
+        })
+
+        viewModel.resultLoadingProgress.observe(this, Observer {
+            if(it){
+                loading_progress.visibility = View.VISIBLE
+            }else {
+                loading_progress.visibility = View.GONE
             }
         })
     }
