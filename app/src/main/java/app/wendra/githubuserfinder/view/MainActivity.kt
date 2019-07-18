@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     private var userAdapter = ListAdapter()
 
+    private var selectedUsername = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,11 +49,10 @@ class MainActivity : AppCompatActivity() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 if (!recyclerView.canScrollVertically(1)) {
-                    if(username_txt.text.toString().isNotEmpty()){
-
+                    if(selectedUsername.isNotEmpty()){
                         //prevent calling multiple times when still in progress
                         if(loading_progress.visibility != View.VISIBLE) {
-                            viewModel.searchUser(username_txt.text.toString())
+                            viewModel.searchUser(selectedUsername)
                         }
                     }
                 }
@@ -66,10 +67,14 @@ class MainActivity : AppCompatActivity() {
             //close keyboard
             KeyboardUtil.hideKeyboard(this)
 
+            //reset selected finder
+            selectedUsername = ""
+
             //check if edittext is not empty
             if(search_txt.text.toString().isEmpty()) {
                 Toast.makeText(this, Constants.error_empty_msg, Toast.LENGTH_LONG).show()
             }else {
+                selectedUsername = search_txt.text.toString()
                 viewModel.searchUser(search_txt.text.toString(), true)
             }
         }

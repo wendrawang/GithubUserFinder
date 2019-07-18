@@ -23,6 +23,7 @@ class MainViewModel: ViewModel() {
         if(isFirstTime) {
             //reset page every time this method is execute
             currentPage = 1
+            allSearchUsers = mutableListOf()
             successSearchUsers = mutableListOf()
 
             //reset list everytime first time search
